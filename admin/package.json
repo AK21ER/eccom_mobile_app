@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.60.0",
+    "clerk": "^0.8.3",
     "mobile_app": "file:..",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
