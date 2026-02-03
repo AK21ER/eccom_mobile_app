@@ -6,6 +6,8 @@ import connectDB from "./config/db.js";
 import { serve } from "inngest/express";
 import { functions, inngest } from "./config/inngest.js";
 import adminRoutes from "./routes/admin.route.js";
+import userRoutes from "./routes/user.route.js";
+
 
 
 const app = express();
@@ -17,6 +19,8 @@ app.use(clerkMiddleware());
 app.use("/api/inngest", serve({ client: inngest, functions }));
 
 app.use("/api/admin", adminRoutes);
+app.use("/api/users", userRoutes);
+
 
 if (NODE_ENV === "production") {
     const adminDistPath = path.join(import.meta.dirname, "../../admin/dist");
@@ -27,7 +31,11 @@ if (NODE_ENV === "production") {
     });
 }
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    connectDB();
-});
+const startServer = async () => {
+  await connectDB();
+  app.listen(PORT, () => {
+    console.log("Server is up and running");
+  });
+};
+
+startServer();
