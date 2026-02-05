@@ -28,6 +28,6 @@ createRoot(document.getElementById('root')!).render(
         <App />
         </QueryClientProvider>
       </ClerkProvider>
-      </BrowserRouter>
+    </BrowserRouter>
   </StrictMode>,
 )
