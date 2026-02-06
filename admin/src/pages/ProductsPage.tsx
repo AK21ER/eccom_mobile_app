@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { PlusIcon, PencilIcon, Trash2Icon, XIcon, ImageIcon } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { productApi } from "../lib/api";
-import { getStockStatusBadge } from "../lib/utils";
+import { productApi } from "../lib/api.ts";
+import { getStockStatusBadge } from "../lib/utils.ts";
 
 interface Product {
   _id: string;
