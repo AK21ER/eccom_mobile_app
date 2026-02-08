@@ -48,9 +48,10 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 
-app.get("/api/health", (req, res) => {
-  res.status(200).json({ message: "Success" });
-});
+app.get('/', (req, res) => {
+  res.send('API running')
+})
+
 
 // make our app ready for deployment
 if (NODE_ENV === "production") {
