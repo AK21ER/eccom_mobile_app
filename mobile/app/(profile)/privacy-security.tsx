@@ -181,7 +181,33 @@ function PrivacyAndSecurityScreen() {
         </View>
 
         {/* Privacy Section */}
-       
+        <View className="px-6 pt-4">
+          <Text className="text-text-primary text-lg font-bold mb-4">Privacy</Text>
+
+          {privacySettings.map((setting) => (
+            <View key={setting.id}>
+              <View className="bg-surface rounded-2xl p-4 mb-3">
+                <View className="flex-row items-center">
+                  <View className="bg-primary/20 rounded-full w-12 h-12 items-center justify-center mr-4">
+                    <Ionicons name={setting.icon as any} size={24} color="#1DB954" />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-text-primary font-bold text-base mb-1">
+                      {setting.title}
+                    </Text>
+                    <Text className="text-text-secondary text-sm">{setting.description}</Text>
+                  </View>
+                  <Switch
+                    value={setting.value}
+                    onValueChange={(value) => handleToggle(setting.id, value)}
+                    trackColor={{ false: "#2A2A2A", true: "#1DB954" }}
+                    thumbColor="#FFFFFF"
+                  />
+                </View>
+              </View>
+            </View>
+          ))}
+        </View>
 
         {/* ACCOUNT SECTION */}
      
