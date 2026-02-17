@@ -210,13 +210,60 @@ function PrivacyAndSecurityScreen() {
         </View>
 
         {/* ACCOUNT SECTION */}
-     
+        <View className="px-6 pt-4">
+          <Text className="text-text-primary text-lg font-bold mb-4">Account</Text>
+
+          {accountSettings.map((setting) => (
+            <TouchableOpacity
+              key={setting.id}
+              className="bg-surface rounded-2xl p-4 mb-3"
+              activeOpacity={0.7}
+            >
+              <View className="flex-row items-center">
+                <View className="bg-primary/20 rounded-full w-12 h-12 items-center justify-center mr-4">
+                  <Ionicons name={setting.icon as any} size={24} color="#1DB954" />
+                </View>
+                <View className="flex-1">
+                  <Text className="text-text-primary font-bold text-base mb-1">
+                    {setting.title}
+                  </Text>
+                  <Text className="text-text-secondary text-sm">{setting.description}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#666" />
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
 
         {/* DELETE ACC BTN */}
-
+        <View className="px-6 pt-4">
+          <TouchableOpacity
+            className="bg-surface rounded-2xl p-5 flex-row items-center justify-between border-2 border-red-500/20"
+            activeOpacity={0.7}
+          >
+            <View className="flex-row items-center">
+              <View className="bg-red-500/20 rounded-full w-12 h-12 items-center justify-center mr-4">
+                <Ionicons name="trash-outline" size={24} color="#EF4444" />
+              </View>
+              <View>
+                <Text className="text-red-500 font-bold text-base mb-1">Delete Account</Text>
+                <Text className="text-text-secondary text-sm">Permanently delete your account</Text>
+              </View>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#EF4444" />
+          </TouchableOpacity>
+        </View>
 
         {/* INFO ALERT */}
-
+        <View className="px-6 pt-6 pb-4">
+          <View className="bg-primary/10 rounded-2xl p-4 flex-row">
+            <Ionicons name="information-circle-outline" size={24} color="#1DB954" />
+            <Text className="text-text-secondary text-sm ml-3 flex-1">
+              We take your privacy seriously. Your data is encrypted and stored securely. You can
+              manage your privacy settings at any time.
+            </Text>
+          </View>
+        </View>
       </ScrollView>
     </SafeScreen>
   );
