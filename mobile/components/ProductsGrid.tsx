@@ -2,7 +2,7 @@ import useCart from "@/hooks/useCart";
 import useWishlist from "@/hooks/useWishlist";
 import { Product } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import {
   View,
   Text,
@@ -44,7 +44,8 @@ const ProductsGrid = ({ products, isLoading, isError }: ProductsGridProps) => {
       className="bg-surface rounded-3xl overflow-hidden mb-3"
       style={{ width: "48%" }}
       activeOpacity={0.8}
-      // onPress={() => router.push(`/product/${product._id}`)}
+      onPress={() => router.push(`/product/${product._id}` as Href)
+    }
     >
       <View className="relative">
         <Image
