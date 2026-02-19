@@ -47,7 +47,15 @@ export const useAddresses = () => {
     },
   });
 
-
+  const deleteAddressMutation = useMutation({
+    mutationFn: async (addressId: string) => {
+      const { data } = await api.delete<{ addresses: Address[] }>(`/users/addresses/${addressId}`);
+      return data.addresses;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["addresses"] });
+    },
+  });
 
   return {
     addresses: addresses || [],
@@ -55,9 +63,9 @@ export const useAddresses = () => {
     isError,
     addAddress: addAddressMutation.mutate,
     updateAddress: updateAddressMutation.mutate,
-    
+    deleteAddress: deleteAddressMutation.mutate,
     isAddingAddress: addAddressMutation.isPending,
-   
-    
+    isUpdatingAddress: updateAddressMutation.isPending,
+    isDeletingAddress: deleteAddressMutation.isPending,
   };
 };
