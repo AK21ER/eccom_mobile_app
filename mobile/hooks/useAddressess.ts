@@ -18,7 +18,15 @@ export const useAddresses = () => {
     },
   });
 
- 
+  const addAddressMutation = useMutation({
+    mutationFn: async (addressData: Omit<Address, "_id">) => {
+      const { data } = await api.post<{ addresses: Address[] }>("/users/addresses", addressData);
+      return data.addresses;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["addresses"] });
+    },
+  });
 
  
 
@@ -27,6 +35,10 @@ export const useAddresses = () => {
     addresses: addresses || [],
     isLoading,
     isError,
+    addAddress: addAddressMutation.mutate,
+ 
+    
+    isAddingAddress: addAddressMutation.isPending,
    
     
   };
