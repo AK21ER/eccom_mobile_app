@@ -30,7 +30,7 @@ const ProfileScreen = () => {
         contentContainerStyle={{ paddingBottom: 100 }}
       >
         {/* HEADER */}
-        <View className="px-6 pb-8">
+        <View className="px-6 py-8">
           <View className="bg-surface rounded-3xl p-6">
             <View className="flex-row items-center">
               <View className="relative">
