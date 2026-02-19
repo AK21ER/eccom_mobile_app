@@ -165,7 +165,7 @@ function ProductsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex items-center justify-center min-h-screen">
         <span className="loading loading-spinner loading-lg text-primary"></span>
       </div>
     );

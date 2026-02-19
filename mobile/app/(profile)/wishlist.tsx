@@ -3,7 +3,7 @@ import useCart from "@/hooks/useCart";
 import useWishlist from "@/hooks/useWishlist";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 function WishlistScreen() {
@@ -81,7 +81,8 @@ function WishlistScreen() {
                 key={item._id}
                 className="bg-surface rounded-3xl overflow-hidden mb-3"
                 activeOpacity={0.8}
-                // onPress={() => router.push(`/product/${item._id}`)}
+                onPress={() => router.push(`/product/${item._id}` as Href) 
+              }
               >
                 <View className="flex-row p-4">
                   <Image
