@@ -48,7 +48,20 @@ function AddressesScreen() {
     });
   };
 
-
+  const handleEditAddress = (address: Address) => {
+    setShowAddressForm(true);
+    setEditingAddressId(address._id);
+    setAddressForm({
+      label: address.label,
+      fullName: address.fullName,
+      streetAddress: address.streetAddress,
+      city: address.city,
+      state: address.state,
+      zipCode: address.zipCode,
+      phoneNumber: address.phoneNumber,
+      isDefault: address.isDefault,
+    });
+  };
 
 
 
@@ -58,7 +71,7 @@ function AddressesScreen() {
 
   return (
    
-  )
+  );
 }
 export default AddressesScreen;
 
