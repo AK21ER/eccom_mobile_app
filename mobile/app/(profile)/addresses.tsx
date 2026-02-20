@@ -190,5 +190,31 @@ function AddressesScreen() {
 }
 export default AddressesScreen;
 
+function ErrorUI() {
+  return (
+    <SafeScreen>
+      <AddressesHeader />
+      <View className="flex-1 items-center justify-center px-6">
+        <Ionicons name="alert-circle-outline" size={64} color="#FF6B6B" />
+        <Text className="text-text-primary font-semibold text-xl mt-4">
+          Failed to load addresses
+        </Text>
+        <Text className="text-text-secondary text-center mt-2">
+          Please check your connection and try again
+        </Text>
+      </View>
+    </SafeScreen>
+  );
+}
 
-
+function LoadingUI() {
+  return (
+    <SafeScreen>
+      <AddressesHeader />
+      <View className="flex-1 items-center justify-center px-6">
+        <ActivityIndicator size="large" color="#00D9FF" />
+        <Text className="text-text-secondary mt-4">Loading addresses...</Text>
+      </View>
+    </SafeScreen>
+  );
+}
