@@ -63,7 +63,12 @@ function AddressesScreen() {
     });
   };
 
-
+  const handleDeleteAddress = (addressId: string, label: string) => {
+    Alert.alert("Delete Address", `Are you sure you want to delete ${label}`, [
+      { text: "Cancel", style: "cancel" },
+      { text: "Delete", style: "destructive", onPress: () => deleteAddress(addressId) },
+    ]);
+  };
 
 
 
