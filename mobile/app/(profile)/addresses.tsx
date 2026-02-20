@@ -1,6 +1,12 @@
-
+import AddressCard from "@/components/AddressCard";
+import AddressesHeader from "@/components/AddressesHeader";
+import AddressFormModal from "@/components/AddressFormModal";
+import SafeScreen from "@/components/SafeScreen";
 import { useAddresses } from "@/hooks/useAddressess";
+import { Address } from "@/types";
+import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 function AddressesScreen() {
   const {
@@ -27,7 +33,20 @@ function AddressesScreen() {
     isDefault: false,
   });
 
- 
+  const handleAddAddress = () => {
+    setShowAddressForm(true);
+    setEditingAddressId(null);
+    setAddressForm({
+      label: "",
+      fullName: "",
+      streetAddress: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      phoneNumber: "",
+      isDefault: false,
+    });
+  };
 
 
 
@@ -38,7 +57,7 @@ function AddressesScreen() {
 
 
   return (
-   <text>AddressesScreen</text>
+   
   )
 }
 export default AddressesScreen;
