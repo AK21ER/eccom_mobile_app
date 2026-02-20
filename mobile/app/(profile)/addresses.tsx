@@ -70,6 +70,51 @@ function AddressesScreen() {
     ]);
   };
 
+  const handleSaveAddress = () => {
+    if (
+      !addressForm.label ||
+      !addressForm.fullName ||
+      !addressForm.streetAddress ||
+      !addressForm.city ||
+      !addressForm.state ||
+      !addressForm.zipCode ||
+      !addressForm.phoneNumber
+    ) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
+    if (editingAddressId) {
+      // update an existing address
+      updateAddress(
+        {
+          addressId: editingAddressId,
+          addressData: addressForm,
+        },
+        {
+          onSuccess: () => {
+            setShowAddressForm(false);
+            setEditingAddressId(null);
+            Alert.alert("Success", "Address updated successfully");
+          },
+          onError: (error: any) => {
+            Alert.alert("Error", error?.response?.data?.error || "Failed to update address");
+          },
+        }
+      );
+    } else {
+      // create new address
+      addAddress(addressForm, {
+        onSuccess: () => {
+          setShowAddressForm(false);
+          Alert.alert("Success", "Address added successfully");
+        },
+        onError: (error: any) => {
+          Alert.alert("Error", error?.response?.data?.error || "Failed to add address");
+        },
+      });
+    }
+  };
 
 
 
