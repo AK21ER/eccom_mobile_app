@@ -1,12 +1,47 @@
-import { View, Text } from 'react-native'
-import React from 'react'
 
-const addresses = () => {
+import { useAddresses } from "@/hooks/useAddressess";
+import { useState } from "react";
+
+function AddressesScreen() {
+  const {
+    addAddress,
+    addresses,
+    deleteAddress,
+    isAddingAddress,
+    isDeletingAddress,
+    isError,
+    isLoading,
+    isUpdatingAddress,
+    updateAddress,
+  } = useAddresses();
+  const [showAddressForm, setShowAddressForm] = useState(false);
+  const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
+  const [addressForm, setAddressForm] = useState({
+    label: "",
+    fullName: "",
+    streetAddress: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    phoneNumber: "",
+    isDefault: false,
+  });
+
+ 
+
+
+
+
+
+
+
+
+
   return (
-    <View>
-      <Text>addresses</Text>
-    </View>
+   <text>AddressesScreen</text>
   )
 }
+export default AddressesScreen;
 
-export default addresses
+
+
