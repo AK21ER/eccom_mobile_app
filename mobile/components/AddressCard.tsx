@@ -1,12 +1,18 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Address } from "@/types";
 
-const AddressCard = () => {
-  return (
-    <View>
-      <Text>AddressCard</Text>
-    </View>
-  )
+interface AddressCardProps {
+  address: Address;
+  onEdit: (address: Address) => void;
+  onDelete: (addressId: string, label: string) => void;
+  isUpdatingAddress: boolean;
+  isDeletingAddress: boolean;
 }
 
-export default AddressCard
+export default function AddressCard(
+ ) {
+  return (
+    
+  );
+}
