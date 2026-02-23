@@ -20,6 +20,7 @@ const ProfileScreen = () => {
   const handleMenuPress = (action: (typeof MENU_ITEMS)[number]["action"]) => {
     if (action === "/profile") return;
     router.push(action as Href);
+    
   };
 
   return (
