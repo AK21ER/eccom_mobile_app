@@ -199,7 +199,40 @@ const ProductDetailScreen = () => {
         </View>
       </ScrollView>
 
-    
+      {/* Bottom Action Bar */}
+      <View className="absolute bottom-0 left-0 right-0 bg-background/95 backdrop-blur-xl border-t border-surface px-6 py-4 pb-8">
+        <View className="flex-row items-center gap-3">
+          <View className="flex-1">
+            <Text className="text-text-secondary text-sm mb-1">Total Price</Text>
+            <Text className="text-primary text-2xl font-bold">
+              ${(product.price * quantity).toFixed(2)}
+            </Text>
+          </View>
+          <TouchableOpacity
+            className={`rounded-2xl px-8 py-4 flex-row items-center ${
+              !inStock ? "bg-surface" : "bg-primary"
+            }`}
+            activeOpacity={0.8}
+            onPress={handleAddToCart}
+            disabled={!inStock || isAddingToCart}
+          >
+            {isAddingToCart ? (
+              <ActivityIndicator size="small" color="#121212" />
+            ) : (
+              <>
+                <Ionicons name="cart" size={24} color={!inStock ? "#666" : "#121212"} />
+                <Text
+                  className={`font-bold text-lg ml-2 ${
+                    !inStock ? "text-text-secondary" : "text-background"
+                  }`}
+                >
+                  {!inStock ? "Out of Stock" : "Add to Cart"}
+                </Text>
+              </>
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
     </SafeScreen>
   );
 };
