@@ -29,7 +29,18 @@ const ProductDetailScreen = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
-
+  const handleAddToCart = () => {
+    if (!product) return;
+    addToCart(
+      { productId: product._id, quantity },
+      {
+        onSuccess: () => Alert.alert("Success", `${product.name} added to cart!`),
+        onError: (error: any) => {
+          Alert.alert("Error", error?.response?.data?.error || "Failed to add to cart");
+        },
+      }
+    );
+  };
 
 
   return (
