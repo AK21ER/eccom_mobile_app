@@ -259,3 +259,13 @@ function ErrorUI() {
   );
 }
 
+function LoadingUI() {
+  return (
+    <SafeScreen>
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" color="#1DB954" />
+        <Text className="text-text-secondary mt-4">Loading product...</Text>
+      </View>
+    </SafeScreen>
+  );
+}
