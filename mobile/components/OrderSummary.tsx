@@ -1,12 +1,9 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text } from "react-native";
 
-const OrderSummary = () => {
+
+
+export default function OrderSummary() {
   return (
-    <View>
-      <Text>OrderSummary</Text>
-    </View>
-  )
+   
+  );
 }
-
-export default OrderSummary
