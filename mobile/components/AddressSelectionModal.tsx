@@ -11,8 +11,14 @@ interface AddressSelectionModalProps {
   isProcessing: boolean;
 }
 
-const AddressSelectionModal = () => {
- 
+const AddressSelectionModal = ({
+  visible,
+  onClose,
+  onProceed,
+  isProcessing,
+}: AddressSelectionModalProps) => {
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+  const { addresses, isLoading: addressesLoading } = useAddresses();
 
   return (
    
