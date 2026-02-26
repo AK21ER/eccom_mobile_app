@@ -86,7 +86,29 @@ const AddressSelectionModal = ({
             )}
           </ScrollView>
 
-
+          <View className="p-6 border-t border-surface">
+            <TouchableOpacity
+              className="bg-primary rounded-2xl py-5"
+              activeOpacity={0.9}
+              onPress={() => {
+                if (selectedAddress) onProceed(selectedAddress);
+              }}
+              disabled={!selectedAddress || isProcessing}
+            >
+              <View className="flex-row items-center justify-center">
+                {isProcessing ? (
+                  <ActivityIndicator size="small" color="#121212" />
+                ) : (
+                  <>
+                    <Text className="text-background font-bold text-lg mr-2">
+                      Continue to Payment
+                    </Text>
+                    <Ionicons name="arrow-forward" size={20} color="#121212" />
+                  </>
+                )}
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>
