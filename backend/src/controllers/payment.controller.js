@@ -253,3 +253,19 @@ export async function handleCallback(req, res) {
     res.sendStatus(500);
   }
 }
+
+export async function getPaymentStatus(req, res) {
+  const { tx_ref } = req.params;
+
+  const order = await Order.findOne({
+    "paymentResult.id": tx_ref,
+  });
+
+  if (!order) {
+    return res.status(404).json({ error: "Order not found" });
+  }
+
+  res.json({
+    status: order.paymentResult.status,
+  });
+}
