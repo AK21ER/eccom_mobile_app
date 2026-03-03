@@ -1,11 +1,15 @@
 import Stripe from "stripe";
-import { ENV } from "../config/env.js";
+import { CHAPA_SECRET_KEY, PORT} from "../config/env.js";
 import { User } from "../models/user.model.js";
 import { Product } from "../models/product.model.js";
 import { Order } from "../models/order.model.js";
 import { Cart } from "../models/cart.model.js";
+import { Chapa } from 'chapa-nodejs';
+
+
 
 // const stripe = new Stripe(ENV.STRIPE_SECRET_KEY);
+//creating chapa intent
 
 export async function createPaymentIntent(req, res) {
   try {
@@ -49,7 +53,49 @@ export async function createPaymentIntent(req, res) {
       return res.status(400).json({ error: "Invalid order total" });
     }
 
-    // find or create the stripe customer
+
+      const chapa = new Chapa({
+        secretKey: CHAPA_SECRET_KEY,
+      });
+
+      
+      
+      const tx_ref = await chapa.genTxRef();
+
+           const order = await Order.create({
+                user: user._id,
+                orderItems: validatedItems,
+                shippingAddress,
+                totalPrice: total,
+                paymentResult: {
+                  id: tx_ref,
+                  status: "pending",
+                },
+            });
+
+      const response = await chapa.initialize({
+      first_name: user.name,
+      email: user.email,
+      phone_number: user.phone,
+      currency: "ETB",
+      amount: total,
+      tx_ref: tx_ref,
+      callback_url: `http://localhost:${PORT}/api/payment/callback`,
+      return_url: "http://localhost:3000/success",
+      customization: {
+        title: "My Store Payment",
+        description: "Payment for items",
+      },
+    });
+
+       res.json(response.data.checkout_url);
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+      // find or create the stripe customer
     // let customer;
     // if (user.stripeCustomerId) {
     //   // find the customer
@@ -88,11 +134,11 @@ export async function createPaymentIntent(req, res) {
     // });
 
 //     res.status(200).json({ clientSecret: paymentIntent.client_secret });
-  } catch (error) {
-    console.error("Error creating payment intent:", error);
-    res.status(500).json({ error: "Failed to create payment intent" });
-  }
-}
+//   } catch (error) {
+//     console.error("Error creating payment intent:", error);
+//     res.status(500).json({ error: "Failed to create payment intent" });
+//   }
+// }
 
 // export async function handleWebhook(req, res) {
 //   const sig = req.headers["stripe-signature"];
@@ -149,3 +195,61 @@ export async function createPaymentIntent(req, res) {
 
 //   res.json({ received: true });
 // }
+
+export async function handleCallback(req, res) {
+  try {
+    const chapa = new Chapa({
+      secretKey: CHAPA_SECRET_KEY,
+    });
+
+    const { tx_ref } = req.body;
+
+    if (!tx_ref) {
+      return res.status(400).json({ error: "Missing tx_ref" });
+    }
+
+    const result = await chapa.verify(tx_ref);
+
+    // Find order
+    const order = await Order.findOne({
+      "paymentResult.id": tx_ref,
+    });
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    // Prevent duplicate processing
+    if (order.paymentResult.status === "paid") {
+      return res.json({ message: "Already processed" });
+    }
+
+    if (result.status === "success") {
+      // ✅ Update order
+      order.paymentResult.status = "paid";
+      order.isPaid = true;
+      order.paidAt = new Date();
+      await order.save();
+
+      // ✅ Update stock
+      for (const item of order.orderItems) {
+        await Product.findByIdAndUpdate(item.product, {
+          $inc: { stock: -item.quantity },
+        });
+      }
+
+      console.log("Payment successful:", tx_ref);
+    } else {
+      order.paymentResult.status = "failed";
+      await order.save();
+
+      console.log("Payment failed:", tx_ref);
+    }
+
+    res.sendStatus(200);
+
+  } catch (error) {
+    console.error("Callback error:", error);
+    res.sendStatus(500);
+  }
+}
