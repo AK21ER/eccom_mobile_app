@@ -75,10 +75,35 @@ const CartScreen = () => {
     setAddressModalVisible(true);
   };
 
+
+   const checkPaymentStatus = async (tx_ref: string) => {
+  try {
+
+    const { data } = await api.get(`/payment/status/${tx_ref}`);
+
+    if (data.status === "paid") {
+      clearCart();
+
+      Alert.alert(
+        "Payment Successful 🎉",
+        "Your order has been placed successfully."
+      );
+    }
+
+    if (data.status === "failed") {
+      Alert.alert("Payment Failed", "Your payment was not completed.");
+    }
+
+  } catch (error) {
+    Alert.alert("Error", "Could not verify payment.");
+  }
+};
+
+
+
   const handleProceedWithPayment = async (selectedAddress: Address) => {
     setAddressModalVisible(false);
-
-     try {
+try {
     setPaymentLoading(true);
 
     const { data } = await api.post("/payment/create", {
@@ -93,10 +118,13 @@ const CartScreen = () => {
       },
     });
 
-    const { checkout_url } = data;
+    const { checkout_url, tx_ref } = data;
 
     // open chapa checkout
     await WebBrowser.openBrowserAsync(checkout_url);
+
+    // after user returns check payment
+    checkPaymentStatus(tx_ref);
 
   } catch (error) {
     Alert.alert("Error", "Failed to start payment");
@@ -104,6 +132,8 @@ const CartScreen = () => {
     setPaymentLoading(false);
   }
 
+
+ 
     // // log chechkout initiated
     // Sentry.logger.info("Checkout initiated", {
     //   itemCount: cartItemCount,
