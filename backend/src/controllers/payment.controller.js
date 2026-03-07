@@ -81,7 +81,7 @@ export async function createPaymentIntent(req, res) {
       amount: total,
       tx_ref: tx_ref,
       callback_url: `http://localhost:${PORT}/api/payment/callback`,
-      return_url: "http://localhost:3000/success",
+      return_url: `http://localhost:${PORT}/success`,
       customization: {
         title: "My Store Payment",
         description: "Payment for items",
