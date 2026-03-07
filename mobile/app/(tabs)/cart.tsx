@@ -10,6 +10,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import OrderSummary from "@/components/OrderSummary";
 import AddressSelectionModal from "@/components/AddressSelectionModal";
+import * as WebBrowser from "expo-web-browser";
 
 // import * as Sentry from "@sentry/react-native";
 
@@ -77,6 +78,32 @@ const CartScreen = () => {
   const handleProceedWithPayment = async (selectedAddress: Address) => {
     setAddressModalVisible(false);
 
+     try {
+    setPaymentLoading(true);
+
+    const { data } = await api.post("/payment/create", {
+      cartItems,
+      shippingAddress: {
+        fullName: selectedAddress.fullName,
+        streetAddress: selectedAddress.streetAddress,
+        city: selectedAddress.city,
+        state: selectedAddress.state,
+        zipCode: selectedAddress.zipCode,
+        phoneNumber: selectedAddress.phoneNumber,
+      },
+    });
+
+    const { checkout_url } = data;
+
+    // open chapa checkout
+    await WebBrowser.openBrowserAsync(checkout_url);
+
+  } catch (error) {
+    Alert.alert("Error", "Failed to start payment");
+  } finally {
+    setPaymentLoading(false);
+  }
+
     // // log chechkout initiated
     // Sentry.logger.info("Checkout initiated", {
     //   itemCount: cartItemCount,
@@ -84,74 +111,74 @@ const CartScreen = () => {
     //   city: selectedAddress.city,
     // });
 
-    try {
-      setPaymentLoading(true);
+  //   try {
+  //     setPaymentLoading(true);
 
-      // create payment intent with cart items and shipping address
-      // const { data } = await api.post("/payment/create-intent", {
-      //   cartItems,
-      //   shippingAddress: {
-      //     fullName: selectedAddress.fullName,
-      //     streetAddress: selectedAddress.streetAddress,
-      //     city: selectedAddress.city,
-      //     state: selectedAddress.state,
-      //     zipCode: selectedAddress.zipCode,
-      //     phoneNumber: selectedAddress.phoneNumber,
-      //   },
-      // });
+  //     // create payment intent with cart items and shipping address
+  //     // const { data } = await api.post("/payment/create-intent", {
+  //     //   cartItems,
+  //     //   shippingAddress: {
+  //     //     fullName: selectedAddress.fullName,
+  //     //     streetAddress: selectedAddress.streetAddress,
+  //     //     city: selectedAddress.city,
+  //     //     state: selectedAddress.state,
+  //     //     zipCode: selectedAddress.zipCode,
+  //     //     phoneNumber: selectedAddress.phoneNumber,
+  //     //   },
+  //     // });
 
-      // const { error: initError } = await initPaymentSheet({
-      //   paymentIntentClientSecret: data.clientSecret,
-      //   merchantDisplayName: "Your Store Name",
-      // });
+  //     // const { error: initError } = await initPaymentSheet({
+  //     //   paymentIntentClientSecret: data.clientSecret,
+  //     //   merchantDisplayName: "Your Store Name",
+  //     // });
 
-      // if (initError) {
-      //   Sentry.logger.error("Payment sheet init failed", {
-      //     errorCode: initError.code,
-      //     errorMessage: initError.message,
-      //     cartTotal: total,
-      //     itemCount: cartItems.length,
-      //   });
+  //     // if (initError) {
+  //     //   Sentry.logger.error("Payment sheet init failed", {
+  //     //     errorCode: initError.code,
+  //     //     errorMessage: initError.message,
+  //     //     cartTotal: total,
+  //     //     itemCount: cartItems.length,
+  //     //   });
 
-      //   Alert.alert("Error", initError.message);
-      //   setPaymentLoading(false);
-      //   return;
-      // }
+  //     //   Alert.alert("Error", initError.message);
+  //     //   setPaymentLoading(false);
+  //     //   return;
+  //     // }
 
-      // present payment sheet
-      // const { error: presentError } = await presentPaymentSheet();
+  //     // present payment sheet
+  //     // const { error: presentError } = await presentPaymentSheet();
 
-  //     if (presentError) {
-  //       Sentry.logger.error("Payment cancelled", {
-  //         errorCode: presentError.code,
-  //         errorMessage: presentError.message,
-  //         cartTotal: total,
-  //         itemCount: cartItems.length,
-  //       });
+  // //     if (presentError) {
+  // //       Sentry.logger.error("Payment cancelled", {
+  // //         errorCode: presentError.code,
+  // //         errorMessage: presentError.message,
+  // //         cartTotal: total,
+  // //         itemCount: cartItems.length,
+  // //       });
 
-  //       Alert.alert("Payment cancelled", presentError.message);
-  //     } else {
-  //       Sentry.logger.info("Payment successful", {
-  //         total: total.toFixed(2),
-  //         itemCount: cartItems.length,
-  //       });
+  // //       Alert.alert("Payment cancelled", presentError.message);
+  // //     } else {
+  // //       Sentry.logger.info("Payment successful", {
+  // //         total: total.toFixed(2),
+  // //         itemCount: cartItems.length,
+  // //       });
 
-  //       Alert.alert("Success", "Your payment was successful! Your order is being processed.", [
-  //         { text: "OK", onPress: () => {} },
-  //       ]);
-  //       clearCart();
-      // }
-    } catch (error) {
-  //     Sentry.logger.error("Payment failed", {
-  //       error: error instanceof Error ? error.message : "Unknown error",
-  //       cartTotal: total,
-  //       itemCount: cartItems.length,
-  //     });
+  // //       Alert.alert("Success", "Your payment was successful! Your order is being processed.", [
+  // //         { text: "OK", onPress: () => {} },
+  // //       ]);
+  // //       clearCart();
+  //     // }
+  //   } catch (error) {
+  // //     Sentry.logger.error("Payment failed", {
+  // //       error: error instanceof Error ? error.message : "Unknown error",
+  // //       cartTotal: total,
+  // //       itemCount: cartItems.length,
+  // //     });
 
-  //     Alert.alert("Error", "Failed to process payment");
-    } finally {
-  //     setPaymentLoading(false);
-    }
+  // //     Alert.alert("Error", "Failed to process payment");
+  //   } finally {
+  // //     setPaymentLoading(false);
+  //   }
   };
 
   if (isLoading) return <LoadingUI />;
