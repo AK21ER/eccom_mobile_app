@@ -31,7 +31,35 @@ function OrdersScreen() {
     setProductRatings(initialRatings);
   };
 
+  const handleSubmitRating = async () => {
+    if (!selectedOrder) return;
 
+    // check if all products have been rated
+    const allRated = Object.values(productRatings).every((rating) => rating > 0);
+    if (!allRated) {
+      Alert.alert("Error", "Please rate all products");
+      return;
+    }
+
+    try {
+      await Promise.all(
+        selectedOrder.orderItems.map((item) => {
+          createReviewAsync({
+            productId: item.product._id,
+            orderId: selectedOrder._id,
+            rating: productRatings[item.product._id],
+          });
+        })
+      );
+
+      Alert.alert("Success", "Thank you for rating all products!");
+      setShowRatingModal(false);
+      setSelectedOrder(null);
+      setProductRatings({});
+    } catch (error: any) {
+      Alert.alert("Error", error?.response?.data?.error || "Failed to submit rating");
+    }
+  };
 
   return (
     
