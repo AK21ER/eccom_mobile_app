@@ -18,6 +18,18 @@ function OrdersScreen() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [productRatings, setProductRatings] = useState<{ [key: string]: number }>({});
 
+  const handleOpenRating = (order: Order) => {
+    setShowRatingModal(true);
+    setSelectedOrder(order);
+
+    // init ratings for all product to 0 - resettin the state for each product
+    const initialRatings: { [key: string]: number } = {};
+    order.orderItems.forEach((item) => {
+      const productId = item.product._id;
+      initialRatings[productId] = 0;
+    });
+    setProductRatings(initialRatings);
+  };
 
 
 
