@@ -1,12 +1,25 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import RatingModal from "@/components/RatingModal";
+import SafeScreen from "@/components/SafeScreen";
+import { useOrders } from "@/hooks/useOrders";
+import { useReviews } from "@/hooks/useReviews";
 
-const orders = () => {
+import { Order } from "@/types";
+import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { router } from "expo-router";
+import { useState } from "react";
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+
+function OrdersScreen() {
+
+
+
+
+
   return (
-    <View>
-      <Text>orders</Text>
-    </View>
-  )
+    
+  );
 }
+export default OrdersScreen;
 
-export default orders
+
