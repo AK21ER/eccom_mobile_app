@@ -100,7 +100,28 @@ const RatingModal = ({
                 })}
               </ScrollView>
 
-              
+              <View className="gap-3">
+                <TouchableOpacity
+                  className="bg-primary rounded-2xl py-4 items-center"
+                  activeOpacity={0.8}
+                  onPress={onSubmit}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <ActivityIndicator size="small" color="#121212" />
+                  ) : (
+                    <Text className="text-background font-bold text-base">Submit All Ratings</Text>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className="bg-surface-lighter rounded-2xl py-4 items-center border border-background-lighter"
+                  activeOpacity={0.7}
+                  onPress={onClose}
+                  disabled={isSubmitting}
+                >
+                  <Text className="text-text-secondary font-bold text-base">Cancel</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </TouchableWithoutFeedback>
         </View>
