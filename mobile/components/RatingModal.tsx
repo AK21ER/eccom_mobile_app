@@ -49,6 +49,56 @@ const RatingModal = ({
                 </Text>
               </View>
 
+              <ScrollView className="mb-4">
+                {order?.orderItems.map((item, index) => {
+                  const productId = item.product._id;
+                  const currentRating = productRatings[productId] || 0;
+
+                  return (
+                    <View
+                      key={item._id}
+                      className={`bg-background-lighter rounded-2xl p-4 ${
+                        index < order.orderItems.length - 1 ? "mb-3" : ""
+                      }`}
+                    >
+                      <View className="flex-row items-center mb-3">
+                        <Image
+                          source={item.image}
+                          style={{ height: 64, width: 64, borderRadius: 8 }}
+                        />
+                        <View className="flex-1 ml-3">
+                          <Text
+                            className="text-text-primary font-semibold text-sm"
+                            numberOfLines={2}
+                          >
+                            {item.name}
+                          </Text>
+                          <Text className="text-text-secondary text-xs mt-1">
+                            Qty: {item.quantity} • ${item.price.toFixed(2)}
+                          </Text>
+                        </View>
+                      </View>
+
+                      <View className="flex-row justify-center">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <TouchableOpacity
+                            key={star}
+                            onPress={() => onRatingChange(productId, star)}
+                            activeOpacity={0.7}
+                            className="mx-1.5"
+                          >
+                            <Ionicons
+                              name={star <= currentRating ? "star" : "star-outline"}
+                              size={32}
+                              color={star <= currentRating ? "#1DB954" : "#666"}
+                            />
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+                    </View>
+                  );
+                })}
+              </ScrollView>
 
               
             </View>
