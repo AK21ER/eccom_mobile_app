@@ -8,7 +8,7 @@ import { functions, inngest } from "./config/inngest.js";
 
 import { PORT, NODE_ENV,CLIENT_URL  } from "./config/env.js";
 import connectDB from "./config/db.js"; 
-
+import { startCronJobs } from "./cron.js";
 import adminRoutes from "./routes/admin.route.js";
 import userRoutes from "./routes/user.route.js";
 import orderRoutes from "./routes/order.route.js";
@@ -63,10 +63,13 @@ if (NODE_ENV === "production") {
   });
 }
 
+
+
 const startServer = async () => {
   await connectDB();
   app.listen(PORT, () => {
     console.log(`Server is up and running on port ${PORT}`);
+    startCronJobs();
   });
 };
 

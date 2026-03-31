@@ -100,10 +100,9 @@ const CartScreen = () => {
 };
 
 
-
-  const handleProceedWithPayment = async (selectedAddress: Address) => {
+const handleProceedWithPayment = async (selectedAddress: Address) => {
     setAddressModalVisible(false);
-try {
+ try {
     setPaymentLoading(true);
 
     const { data } = await api.post("/payment/create", {
