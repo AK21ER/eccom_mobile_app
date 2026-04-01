@@ -1,5 +1,5 @@
 import React from 'react'
-import {  useAuth } from '@clerk/clerk-react';
+import { useAuth } from '@clerk/clerk-react';
 import { Navigate, Route, Routes } from "react-router";
 import LoginPage from './pages/LoginPages';
 import CustomersPage from './pages/CustomersPage';
@@ -13,12 +13,12 @@ import PageLoader from './components/PageLoader';
 
 
 function App() {
-   const {isSignedIn, isLoaded} = useAuth()
+  const { isSignedIn, isLoaded } = useAuth()
 
-     if (!isLoaded) return <PageLoader />;
+  if (!isLoaded) return <PageLoader />;
 
   return (
-  <Routes>
+    <Routes>
       <Route path="/login" element={isSignedIn ? <Navigate to={"/dashboard"} /> : <LoginPage />} />
 
       <Route path="/" element={isSignedIn ? <DashboardLayout /> : <Navigate to={"/login"} />}>
