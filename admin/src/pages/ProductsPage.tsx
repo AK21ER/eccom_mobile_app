@@ -1,55 +1,28 @@
 import { useState } from "react";
 import { PlusIcon, PencilIcon, Trash2Icon, XIcon, ImageIcon } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { productApi } from "../lib/api.ts";
-import { getStockStatusBadge } from "../lib/utils.ts";
-
-interface Product {
-  _id: string;
-  name: string;
-  category: string;
-  price: number;
-  stock: number;
-  description: string;
-  images: string[];
-  averageRating: number;
-  totalReviews: number;
-}
-
-interface ProductFormData {
-  name: string;
-  category: string;
-  price: string;
-  stock: string;
-  description: string;
-}
-
-const INITIAL_FORM_DATA: ProductFormData = {
-  name: "",
-  category: "",
-  price: "",
-  stock: "",
-  description: "",
-};
+import { productApi } from "../lib/api";
+import { getStockStatusBadge } from "../lib/utils";
+import type { Product } from "../types/index";
 
 function ProductsPage() {
+
   const [showModal, setShowModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [productToDelete, setProductToDelete] = useState<string | null>(null);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [formData, setFormData] = useState<ProductFormData>(INITIAL_FORM_DATA);
+  const [formData, setFormData] = useState({
+    name: "",
+    category: "",
+    price: "",
+    stock: "",
+    description: "",
+  });
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const queryClient = useQueryClient();
 
   // fetch some data
-  const {
-    data: products = [],
-    isLoading,
-    isError,
-    error
-  } = useQuery<Product[]>({
+  const { data: products = [] } = useQuery({
     queryKey: ["products"],
     queryFn: productApi.getAll,
   });
@@ -74,21 +47,22 @@ function ProductsPage() {
   const deleteProductMutation = useMutation({
     mutationFn: productApi.delete,
     onSuccess: () => {
-      setShowDeleteModal(false);
-      setProductToDelete(null);
+      closeModal();
       queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });
 
   const closeModal = () => {
-    // revoke blob URLs to free memory
-    imagePreviews.forEach((url) => {
-      if (url.startsWith("blob:")) URL.revokeObjectURL(url);
-    });
-
+    // reset the state
     setShowModal(false);
     setEditingProduct(null);
-    setFormData(INITIAL_FORM_DATA);
+    setFormData({
+      name: "",
+      category: "",
+      price: "",
+      stock: "",
+      description: "",
+    });
     setImages([]);
     setImagePreviews([]);
   };
@@ -110,7 +84,7 @@ function ProductsPage() {
     const files = Array.from(e.target.files || []);
     if (files.length > 3) return alert("Maximum 3 images allowed");
 
-    // revoke previous blob URLs
+    // revoke previous blob URLs to free memory
     imagePreviews.forEach((url) => {
       if (url.startsWith("blob:")) URL.revokeObjectURL(url);
     });
@@ -119,24 +93,7 @@ function ProductsPage() {
     setImagePreviews(files.map((file) => URL.createObjectURL(file)));
   };
 
-  const handleRemoveImage = (index: number) => {
-    const newPreviews = [...imagePreviews];
-    const previewToRemove = newPreviews[index];
-    if (previewToRemove.startsWith("blob:")) URL.revokeObjectURL(previewToRemove);
-
-    newPreviews.splice(index, 1);
-    setImagePreviews(newPreviews);
-
-    // If it was a newly uploaded file, remove it from images state too
-    // This is tricky because images and previews might not align perfectly if editing
-    // But since we replace ALL images on change currently, it's okay for now.
-    // If we want more granular control, we'd need a more complex state.
-    const newImages = [...images];
-    newImages.splice(index, 1);
-    setImages(newImages);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // for new products, require images
@@ -152,9 +109,7 @@ function ProductsPage() {
     formDataToSend.append("category", formData.category);
 
     // only append new images if they were selected
-    if (images.length > 0) {
-      images.forEach((image) => formDataToSend.append("images", image));
-    }
+    if (images.length > 0) images.forEach((image) => formDataToSend.append("images", image));
 
     if (editingProduct) {
       updateProductMutation.mutate({ id: editingProduct._id, formData: formDataToSend });
@@ -162,23 +117,6 @@ function ProductsPage() {
       createProductMutation.mutate(formDataToSend);
     }
   };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <span className="loading loading-spinner loading-lg text-primary"></span>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="alert alert-error">
-        <XIcon className="w-6 h-6" />
-        <span>Error loading products: {(error as any)?.message || "Unknown error"}</span>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -196,75 +134,67 @@ function ProductsPage() {
 
       {/* PRODUCTS GRID */}
       <div className="grid grid-cols-1 gap-4">
-        {products.length === 0 ? (
-          <div className="text-center py-12 bg-base-100 rounded-box border-2 border-dashed border-base-300">
-            <p className="text-base-content/50">No products found. Add your first product!</p>
-          </div>
-        ) : (
-          products.map((product: Product) => {
-            const status = getStockStatusBadge(product.stock);
+        {products?.map((product: Product) => {
+          const status = getStockStatusBadge(product.stock);
 
-            return (
-              <div key={product._id} className="card bg-base-100 shadow-xl border border-base-200">
-                <div className="card-body p-4 md:p-6">
-                  <div className="flex flex-col md:flex-row items-center gap-6">
-                    <div className="avatar">
-                      <div className="w-24 rounded-xl ring ring-primary ring-offset-base-100 ring-offset-2">
-                        <img src={product.images[0]} alt={product.name} className="object-cover" />
+          return (
+            <div key={product._id} className="card bg-base-100 shadow-xl">
+              <div className="card-body">
+                <div className="flex items-center gap-6">
+                  <div className="avatar">
+                    <div className="w-20 rounded-xl">
+                      <img src={product.images[0]} alt={product.name} />
+                    </div>
+                  </div>
+
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="card-title">{product.name}</h3>
+                        <p className="text-base-content/70 text-sm">{product.category}</p>
+                      </div>
+                      <div className={`badge ${status.class}`}>{status.text}</div>
+                    </div>
+                    <div className="flex items-center gap-6 mt-4">
+                      <div>
+                        <p className="text-xs text-base-content/70">Price</p>
+                        <p className="font-bold text-lg">${product.price}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-base-content/70">Stock</p>
+                        <p className="font-bold text-lg">{product.stock} units</p>
                       </div>
                     </div>
+                  </div>
 
-                    <div className="flex-1 text-center md:text-left">
-                      <div className="flex flex-col md:flex-row md:items-start justify-between gap-2">
-                        <div>
-                          <h3 className="card-title justify-center md:justify-start">{product.name}</h3>
-                          <div className="flex items-center justify-center md:justify-start gap-2 mt-1">
-                            <div className="badge badge-outline badge-sm opacity-70">{product.category}</div>
-                            <div className={`badge badge-sm ${status.class}`}>{status.text}</div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-center md:justify-start gap-8 mt-4">
-                        <div className="text-center md:text-left">
-                          <p className="text-xs text-base-content/50 uppercase tracking-wider font-semibold">Price</p>
-                          <p className="font-bold text-xl text-primary">${product.price.toFixed(2)}</p>
-                        </div>
-                        <div className="text-center md:text-left">
-                          <p className="text-xs text-base-content/50 uppercase tracking-wider font-semibold">Stock</p>
-                          <p className="font-bold text-xl">{product.stock} <span className="text-sm font-normal opacity-60">units</span></p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-row md:flex-col gap-2">
-                      <button
-                        className="btn btn-square btn-ghost hover:bg-base-200"
-                        onClick={() => handleEdit(product)}
-                      >
-                        <PencilIcon className="w-5 h-5" />
-                      </button>
-                      <button
-                        className="btn btn-square btn-ghost text-error hover:bg-error/10"
-                        onClick={() => {
-                          setProductToDelete(product._id);
-                          setShowDeleteModal(true);
-                        }}
-                      >
+                  <div className="card-actions">
+                    <button
+                      className="btn btn-square btn-ghost"
+                      onClick={() => handleEdit(product)}
+                    >
+                      <PencilIcon className="w-5 h-5" />
+                    </button>
+                    <button
+                      className="btn btn-square btn-ghost text-error"
+                      onClick={() => deleteProductMutation.mutate(product._id)}
+                    >
+                      {deleteProductMutation.isPending ? (
+                        <span className="loading loading-spinner"></span>
+                      ) : (
                         <Trash2Icon className="w-5 h-5" />
-                      </button>
-                    </div>
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>
-            );
-          })
-        )}
+            </div>
+          );
+        })}
       </div>
 
       {/* ADD/EDIT PRODUCT MODAL */}
 
-      <input type="checkbox" className="modal-toggle" checked={showModal}  readOnly/>
+      <input type="checkbox" className="modal-toggle" checked={showModal} />
 
       <div className="modal">
         <div className="modal-box max-w-2xl">
@@ -385,21 +315,12 @@ function ProductsPage() {
               </div>
 
               {imagePreviews.length > 0 && (
-                <div className="flex flex-wrap gap-4 mt-2">
+                <div className="flex gap-2 mt-2">
                   {imagePreviews.map((preview, index) => (
-                    <div key={index} className="relative group">
-                      <div className="avatar">
-                        <div className="w-24 rounded-lg ring ring-base-300">
-                          <img src={preview} alt={`Preview ${index + 1}`} className="object-cover" />
-                        </div>
+                    <div key={index} className="avatar">
+                      <div className="w-20 rounded-lg">
+                        <img src={preview} alt={`Preview ${index + 1}`} />
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveImage(index)}
-                        className="btn btn-circle btn-xs btn-error absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <XIcon className="w-3 h-3" />
-                      </button>
                     </div>
                   ))}
                 </div>
@@ -433,46 +354,7 @@ function ProductsPage() {
           </form>
         </div>
       </div>
-      {/* DELETE CONFIRMATION MODAL */}
-      <input type="checkbox" className="modal-toggle" checked={showDeleteModal} readOnly />
-      <div className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg text-error flex items-center gap-2">
-            <Trash2Icon className="w-5 h-5" />
-            Delete Product
-          </h3>
-          <p className="py-4 font-medium">
-            Are you sure you want to delete <span className="text-primary">this product</span>? This action cannot be undone.
-          </p>
-          <div className="modal-action">
-            <button
-              className="btn btn-ghost"
-              onClick={() => {
-                setShowDeleteModal(false);
-                setProductToDelete(null);
-              }}
-              disabled={deleteProductMutation.isPending}
-            >
-              Cancel
-            </button>
-            <button
-              className="btn btn-error"
-              onClick={() => productToDelete && deleteProductMutation.mutate(productToDelete)}
-              disabled={deleteProductMutation.isPending}
-            >
-              {deleteProductMutation.isPending ? (
-                <span className="loading loading-spinner"></span>
-              ) : (
-                "Delete"
-              )}
-            </button>
-          </div>
-        </div>
-        <div className="modal-backdrop" onClick={() => !deleteProductMutation.isPending && setShowDeleteModal(false)}>
-          <button className="cursor-default">close</button>
-        </div>
-      </div>
-    </div >
+    </div>
   );
 }
 
