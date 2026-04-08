@@ -1,9 +1,4 @@
-<<<<<<< HEAD
 import {  useAuth } from '@clerk/clerk-react';
-=======
-import React from 'react'
-import { useAuth } from '@clerk/clerk-react';
->>>>>>> 4f773ae3e33fa2ebb2193a8888bee498741afd05
 import { Navigate, Route, Routes } from "react-router";
 import LoginPage from './pages/LoginPages';
 import CustomersPage from './pages/CustomersPage';
