@@ -136,6 +136,7 @@ function ProductsPage() {
         {/* PRODUCTS GRID */}
         <div className="grid grid-cols-1 gap-4">
           {products?.map((product: Product) => {
+            try{
             const status = getStockStatusBadge(product.stock);
 
             return (
@@ -190,7 +191,11 @@ function ProductsPage() {
                 </div>
               </div>
             );
-          })}
+}
+catch(error){
+  console.log(error);
+}
+})}
         </div>
 
         {/* ADD/EDIT PRODUCT MODAL */}
