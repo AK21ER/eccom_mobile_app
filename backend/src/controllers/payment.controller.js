@@ -92,8 +92,8 @@ function normalizePhone(phone) {
 
       let phone = normalizePhone(user.phone);
 
-      if (user.email === process.env.ADMIN_EMAIL) {
-        phone = PHONE_NO;
+      if (user.email === ADMIN_EMAIL) {
+        phone =PHONE_NO;
       }
 
       if (!phone || !/^0[79]\d{8}$/.test(phone)) {
