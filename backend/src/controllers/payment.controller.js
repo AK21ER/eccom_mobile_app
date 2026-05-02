@@ -74,10 +74,34 @@ export async function createPaymentIntent(req, res) {
                 },
             });
 
+function normalizePhone(phone) {
+            if (!phone) return null;
+
+            let p = String(phone).replace(/\s+/g, "").replace(/-/g, "");
+
+            if (p.startsWith("+251")) {
+               p = "0" + p.slice(4);
+            }
+
+            if (p.startsWith("251")) {
+                 p = "0" + p.slice(3);
+            }
+
+            return p;
+}
+
+      const phone = normalizePhone(user.phone);
+
+      if (!phone || !/^0[79]\d{8}$/.test(phone)) {
+        return res.status(400).json({
+          error: "Invalid phone number. Must be 10 digits and start with 09 or 07.",
+        });
+      }
+
       const response = await chapa.initialize({
       first_name: user.name,
       email: user.email,
-      phone_number: String(user.phone),
+      phone_number: phone,
       currency: "ETB",
       amount: total.toFixed(2),
       tx_ref: tx_ref,
