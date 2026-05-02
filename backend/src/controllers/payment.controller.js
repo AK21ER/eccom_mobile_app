@@ -77,9 +77,9 @@ export async function createPaymentIntent(req, res) {
       const response = await chapa.initialize({
       first_name: user.name,
       email: user.email,
-      phone_number: user.phone,
+      phone_number: String(user.phone),
       currency: "ETB",
-      amount: total,
+      amount: total.toFixed(2),
       tx_ref: tx_ref,
       callback_url: `${CLIENT_URL}/api/payment/callback`,
       return_url: `${CLIENT_URL}/payment-success?tx_ref=${tx_ref}`,
