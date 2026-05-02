@@ -125,8 +125,10 @@ const handleProceedWithPayment = async (selectedAddress: Address) => {
     // after user returns check payment
     checkPaymentStatus(tx_ref);
 
-  } catch (error) {
-    Alert.alert("Error", "Failed to start payment");
+  } catch (error: any) {
+  console.log("PAYMENT ERROR:", error?.response?.data || error.message);
+  Alert.alert("Error", error?.response?.data?.error || "Failed to start payment");
+
   } finally {
     setPaymentLoading(false);
   }

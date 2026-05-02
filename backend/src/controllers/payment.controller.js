@@ -64,6 +64,7 @@ export async function createPaymentIntent(req, res) {
 
            const order = await Order.create({
                 user: user._id,
+                clerkId: user.clerkId, 
                 orderItems: validatedItems,
                 shippingAddress,
                 totalPrice: total,
@@ -88,7 +89,10 @@ export async function createPaymentIntent(req, res) {
       },
     });
 
-       res.json(response.data.checkout_url);
+        res.json({
+      checkout_url: response.data.checkout_url,
+      tx_ref,
+    })
 
   } catch (error) {
     res.status(500).json({ error: error.message });
