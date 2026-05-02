@@ -1,5 +1,5 @@
 // import Stripe from "stripe";
-import { CHAPA_SECRET_KEY, PORT} from "../config/env.js";
+import { CHAPA_SECRET_KEY, PORT, CLIENT_URL} from "../config/env.js";
 import { User } from "../models/user.model.js";
 import { Product } from "../models/product.model.js";
 import { Order } from "../models/order.model.js";
@@ -80,8 +80,8 @@ export async function createPaymentIntent(req, res) {
       currency: "ETB",
       amount: total,
       tx_ref: tx_ref,
-      callback_url: `http://localhost:${PORT}/api/payment/callback`,
-      return_url: `http://localhost:${PORT}/success`,
+      callback_url: `${CLIENT_URL}/api/payment/callback`,
+      return_url: `${CLIENT_URL}/payment-success?tx_ref=${tx_ref}`,
       customization: {
         title: "My Store Payment",
         description: "Payment for items",

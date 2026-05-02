@@ -6,7 +6,7 @@ import { useEffect } from "react";
 // const API_URL = "http://localhost:3000/api";
 
 // prod url will work in your physical device
-const API_URL = "https://eccom-mobile-app.onrender.com/api"
+const API_URL = "https://eccom-mobile-app-8.onrender.com/api"
 
 const api = axios.create({
   baseURL: API_URL,

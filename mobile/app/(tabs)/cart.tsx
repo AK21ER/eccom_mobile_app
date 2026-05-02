@@ -105,7 +105,7 @@ const handleProceedWithPayment = async (selectedAddress: Address) => {
  try {
     setPaymentLoading(true);
 
-    const { data } = await api.post("/payment/create", {
+    const { data } = await api.post("/payment/create-intent", {
       cartItems,
       shippingAddress: {
         fullName: selectedAddress.fullName,
