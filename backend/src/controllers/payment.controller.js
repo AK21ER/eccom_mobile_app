@@ -1,5 +1,5 @@
 // import Stripe from "stripe";
-import { CHAPA_SECRET_KEY, PORT, CLIENT_URL} from "../config/env.js";
+import { CHAPA_SECRET_KEY, PORT, CLIENT_URL,PHONE_NO,ADMIN_EMAIL} from "../config/env.js";
 import { User } from "../models/user.model.js";
 import { Product } from "../models/product.model.js";
 import { Order } from "../models/order.model.js";
@@ -90,7 +90,11 @@ function normalizePhone(phone) {
             return p;
 }
 
-      const phone = normalizePhone(user.phone);
+      let phone = normalizePhone(user.phone);
+
+      if (user.email === process.env.ADMIN_EMAIL) {
+        phone = PHONE_NO;
+      }
 
       if (!phone || !/^0[79]\d{8}$/.test(phone)) {
         return res.status(400).json({
