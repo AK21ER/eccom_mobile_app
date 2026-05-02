@@ -2,7 +2,7 @@ import https from "https";
 import http from "http";
 
 // Use the Render external URL if available, otherwise fall back to localhost
-const URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${process.env.PORT || 5000}`;
+const URL = process.env.CLIENT_URL || `http://localhost:${process.env.PORT || 5000}`;
 
 export const startCronJobs = () => {
   // Run every 14 minutes. Render free tier spins down after 15 minutes of inactivity.
